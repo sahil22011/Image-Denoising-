@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Image Denoising</title>
+    </head>
+    <body>
+        <h1>Image Denoising</h1>
+        <form id="upload-form">
+            <input type="file" id="image-input" accept="image/*">
+            <button type="submit">Denoise Image</button>
+        </form>
+        <div id="result">
+            <h2>Original Image:</h2>
+            <img
+                id="original-image"
+                src=""
+                alt="Original Image"
+                style="max-width: 100%;"
+            >
+            <h2>Denoised Image:</h2>
+            <img
+                id="denoised-image"
+                src=""
+                alt="Denoised Image"
+                style="max-width: 100%;"
+            >
+        </div>
+        <script>
+        const form = document.getElementById('upload-form');
+        const imageInput = document.getElementById('image-input');
+        const originalImage = document.getElementById('original-image');
+        const denoisedImage = document.getElementById('denoised-image');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData();
+            formData.append('file', imageInput.files[0]);
+
+            try {
+                const response = await fetch('/denoise/', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = URL.createObjectURL(blob);
+                    originalImage.src = URL.createObjectURL(imageInput.files[0]);
+                    denoisedImage.src = url;
+                } else {
+                    console.error('Error:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+        </script>
+    </body>
+</html>
